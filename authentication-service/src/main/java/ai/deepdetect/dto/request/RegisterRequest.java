@@ -27,5 +27,11 @@ public class RegisterRequest {
         message = "Password must be at least 8 chars, include uppercase, lowercase, digit and special char."
     )
     private String password;
+
+    @Pattern(
+        regexp = "^\\d{10}$",
+        message = "Phone number must be exactly 10 digits"
+    )
+    private String phoneNumber;
     
 }
