@@ -1,6 +1,5 @@
 package ai.deepdetect.controllers;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import ai.deepdetect.dto.response.ApiErrorResponse;
+import ai.deepdetect.exceptions.AuthorizationHeaderMissingException;
 import ai.deepdetect.exceptions.UserAlreadyExistsException;
 import ai.deepdetect.exceptions.UserNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -31,7 +31,20 @@ public class GlobalExceptionController {
 
     private final HttpServletRequest httpServletRequest;
 
+    @ExceptionHandler(value = AuthorizationHeaderMissingException.class)
+    public ResponseEntity<ApiErrorResponse> handleAuthorizationHeaderMissingException(AuthorizationHeaderMissingException e) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse();      
+
+        errorResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        errorResponse.setStatus(HttpStatus.UNAUTHORIZED.name());
+        errorResponse.setError("JWT Authorization Header is missing");
+        errorResponse.setErrorReason(e.getMessage());
+        errorResponse.setPath(e.getPath());
     
+        return ResponseEntity
+                .status(errorResponse.getStatusCode())
+                .body(errorResponse);
+    }
 
     @ExceptionHandler(value = UserNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> UserNotFoundException(UserNotFoundException e) {
@@ -116,7 +129,6 @@ public class GlobalExceptionController {
         errorResponse.setPath(httpServletRequest.getServletPath());
         errorResponse.setErrorReason(e.toString());
         errorResponse.setError("User already exists with given mail");
-        errorResponse.setTimestamp(new Date());
 
         return ResponseEntity
                 .status(errorResponse.getStatusCode())
@@ -132,7 +144,6 @@ public class GlobalExceptionController {
         errorResponse.setPath(httpServletRequest.getServletPath());
         errorResponse.setErrorReason(e.toString());
         errorResponse.setError("Invalid User credentials provided");
-        errorResponse.setTimestamp(new Date());
 
         return ResponseEntity
                 .status(errorResponse.getStatusCode())
@@ -148,7 +159,6 @@ public class GlobalExceptionController {
         errorResponse.setError("JWT Token is expired. Please renew to continue");
         errorResponse.setStatusCode(HttpStatus.UNAUTHORIZED.value());
         errorResponse.setStatus(HttpStatus.UNAUTHORIZED.name());
-        errorResponse.setTimestamp(new Date());
 
         return ResponseEntity
                 .status(errorResponse.getStatusCode())
@@ -179,7 +189,6 @@ public class GlobalExceptionController {
         errorResponse.setPath(httpServletRequest.getServletPath());
         errorResponse.setErrorReason(e.toString());
         errorResponse.setError(e.toString());
-        errorResponse.setTimestamp(new Date());
 
         return ResponseEntity
                 .status(errorResponse.getStatusCode())

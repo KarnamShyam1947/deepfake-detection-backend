@@ -5,10 +5,8 @@ import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class ApiErrorResponse {
 
@@ -20,5 +18,10 @@ public class ApiErrorResponse {
     private String errorReason;
 
     private Map<String, Object> formErrors;
+
+    // TODO: fix to IST 
+    public ApiErrorResponse() {
+        this.timestamp = new Date();
+    }
 
 }

@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import ai.deepdetect.config.security.custom.CustomAuthEntryPoint;
 import ai.deepdetect.config.security.custom.CustomUserDetailService;
 import ai.deepdetect.filters.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final CustomUserDetailService customUserDetailService;
+    private final CustomAuthEntryPoint customAuthEntryPoint;
     private final JwtAuthFilter jwtAuthFilter;
 
     @Bean
@@ -65,7 +67,10 @@ public class SecurityConfig {
                 UsernamePasswordAuthenticationFilter.class
         );
 
-
+        security.exceptionHandling(
+            exception -> exception
+                            .authenticationEntryPoint(customAuthEntryPoint)
+        );
         return security.build();
     }
 }
