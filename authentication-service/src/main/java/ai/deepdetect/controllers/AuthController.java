@@ -1,5 +1,7 @@
 package ai.deepdetect.controllers;
 
+import java.util.Map;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +13,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ai.deepdetect.config.security.custom.CustomUserDetails;
+import ai.deepdetect.dto.request.ForgotPasswordRequest;
 import ai.deepdetect.dto.request.LoginRequest;
 import ai.deepdetect.dto.request.RegisterRequest;
+import ai.deepdetect.dto.request.SetPasswordRequest;
 import ai.deepdetect.dto.response.LoginResponse;
 import ai.deepdetect.dto.response.RegisterResponse;
 import ai.deepdetect.dto.response.UserResponse;
 import ai.deepdetect.entities.UserEntity;
+import ai.deepdetect.exceptions.OTPExpiredException;
 import ai.deepdetect.exceptions.UserAlreadyExistsException;
 import ai.deepdetect.exceptions.UserNotFoundException;
 import ai.deepdetect.services.AuthService;
@@ -63,6 +68,28 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.OK.value())
                 .body(loginResponse); 
+    }
+    
+    @PostMapping("/forgot-password")
+    public Object forgotPassword(@Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) throws UserNotFoundException {
+        UserEntity user = authService.forgotPassword(forgotPasswordRequest);
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(Map.of(
+                    "message", "Password reset link was sent to your mail",
+                    "user", UserResponse.entityToResponse(user)
+                ));
+    }
+   
+    @PostMapping("/set-password")
+    public Object setPassword(@Valid @RequestBody SetPasswordRequest setPasswordRequest) throws UserNotFoundException, OTPExpiredException {
+        UserEntity user = authService.setUserPassword(setPasswordRequest);
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(Map.of(
+                    "message", "Password reset successful",
+                    "user", UserResponse.entityToResponse(user)
+                ));
     }
     
     @GetMapping("/user")

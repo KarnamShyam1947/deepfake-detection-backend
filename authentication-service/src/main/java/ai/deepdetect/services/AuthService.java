@@ -1,16 +1,22 @@
 package ai.deepdetect.services;
 
+import java.util.UUID;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import ai.deepdetect.dto.request.ForgotPasswordRequest;
 import ai.deepdetect.dto.request.LoginRequest;
 import ai.deepdetect.dto.request.RegisterRequest;
+import ai.deepdetect.dto.request.SetPasswordRequest;
 import ai.deepdetect.entities.UserEntity;
+import ai.deepdetect.exceptions.OTPExpiredException;
 import ai.deepdetect.exceptions.UserNotFoundException;
 import ai.deepdetect.repositories.UserRepository;
+import ai.deepdetect.utils.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,8 +30,17 @@ public class AuthService {
     public UserEntity getUserByEmail(String email) throws UserNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(email);
 
-        if(userEntity != null)
+        if(userEntity == null)
             throw new UserNotFoundException(email);
+
+        return userEntity;
+    }
+    
+    public UserEntity getUserByToken(String token) throws UserNotFoundException {
+        UserEntity userEntity = userRepository.findByToken(token);
+
+        if(userEntity == null)
+            throw new UserNotFoundException(token);
 
         return userEntity;
     }
@@ -54,5 +69,30 @@ public class AuthService {
 
         return userRepository.findByEmail(loginRequest.getEmail());
 
+    }
+    
+    public UserEntity forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws UserNotFoundException {
+        UserEntity userByEmail = getUserByEmail(forgotPasswordRequest.getEmail());
+
+        // TODO: Send Mail
+        userByEmail.setToken(UUID.randomUUID().toString());
+        userByEmail.setExpirationDate(DateTimeUtils.addHours(1));
+        userRepository.save(userByEmail);
+        
+        return userByEmail;
+    }
+
+    public UserEntity setUserPassword(SetPasswordRequest setPasswordRequest) throws UserNotFoundException, OTPExpiredException {
+        UserEntity userByToken = getUserByToken(setPasswordRequest.getToken());
+
+        if (DateTimeUtils.isTokenInTime(userByToken.getExpirationDate())) {
+            userByToken.setPassword(passwordEncoder.encode(setPasswordRequest.getPassword()));
+            userByToken.setExpirationDate(null);
+            userByToken.setToken(null);
+
+            userRepository.save(userByToken);
+        }
+
+        return userByToken;
     }
 }
