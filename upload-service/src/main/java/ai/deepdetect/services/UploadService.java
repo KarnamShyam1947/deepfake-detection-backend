@@ -1,13 +1,16 @@
 package ai.deepdetect.services;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 
-import jakarta.annotation.PostConstruct;
+import ai.deepdetect.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -16,17 +19,37 @@ public class UploadService {
 
     private final Cloudinary cloudinary;
 
-    @PostConstruct
-    public void get() throws IOException {
-               
-        var config = ObjectUtils.asMap(
-            "use_filename", true,
-            "unique_filename", false,
-            "overwrite", true
-        );
+    public String uploadVideoFile(MultipartFile multipartVideo) throws IOException {
+        File videoFile = FileUtils.convert(multipartVideo);
 
-        System.out.println(
-                cloudinary.uploader().upload("https://cloudinary-devs.github.io/cld-docs-assets/assets/images/coffee_cup.jpg", config));
-            }
-    
+        Map<?, ?> result = cloudinary.uploader()
+        .upload(videoFile, ObjectUtils.asMap(
+            "resource_type", "video",
+            "folder", "deepfake-detect",        
+            "public_id", FileUtils.extractPublicId(multipartVideo.getOriginalFilename()),
+            "allowed_formats", new String[]{"mp4","mov","webm"}
+        ));
+
+        videoFile.delete();
+
+        return result.get("secure_url").toString();
+    }
+
+    public String uploadVideoFile(MultipartFile multipartVideo, String folderName) throws IOException {
+        File videoFile = FileUtils.convert(multipartVideo);
+
+        Map<?, ?> result = cloudinary.uploader()
+        .upload(videoFile, ObjectUtils.asMap(
+            "resource_type", "video",
+            "folder", folderName,        
+            "public_id", FileUtils.extractPublicId(multipartVideo.getOriginalFilename()),
+            "allowed_formats", new String[]{"mp4","mov","webm"}
+            
+        ));
+
+        videoFile.delete();
+
+        return result.get("secure_url").toString();
+    }
+
 }
