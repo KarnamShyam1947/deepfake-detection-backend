@@ -1,4 +1,4 @@
-package ai.deepdetect.dto;
+package ai.deepdetect.dto.response;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
-    private String id;
+    private int id;
     private String name;
     private String role;
     private String email;
