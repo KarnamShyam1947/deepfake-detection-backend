@@ -46,7 +46,7 @@ public class AuthService {
     }
 
     public UserEntity registerUser(RegisterRequest registerRequest) throws UserNotFoundException {
-        UserEntity userEntity = getUserByEmail(registerRequest.getEmail());
+        UserEntity userEntity = userRepository.findByEmail(registerRequest.getEmail());
 
         if(userEntity != null)
             return null;

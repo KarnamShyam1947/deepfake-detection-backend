@@ -1,5 +1,6 @@
 package ai.deepdetect.services;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -30,6 +31,7 @@ public class HistoryService {
         HistoryEntity entity = getRecordByRequestId(historyRequest.getRequestId());
         BeanUtils.copyProperties(historyRequest, entity);
         entity.setStatus("COMPLETED");
+        entity.setEndDate(new Date());
 
         return historyRepository.save(entity);
     }

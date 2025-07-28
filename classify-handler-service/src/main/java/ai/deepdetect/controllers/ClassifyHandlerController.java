@@ -5,10 +5,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +17,7 @@ import ai.deepdetect.dto.ClassifyRequestOld;
 import ai.deepdetect.dto.event.ClassifyEvent;
 import ai.deepdetect.services.AuthService;
 import ai.deepdetect.services.HistoryService;
+import ai.deepdetect.services.KafkaProducerService;
 import ai.deepdetect.services.UploadService;
 import ai.deepdetect.utils.RequestUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,11 +31,7 @@ public class ClassifyHandlerController {
     private final AuthService authService;
     private final UploadService uploadService;
     private final HistoryService historyService;
-    
-    @GetMapping
-    public String get() {
-        return "Hello, World";
-    }
+    private final KafkaProducerService kafkaProducerService;
 
     @PostMapping
     public ResponseEntity<?> handlePost(@RequestBody ClassifyRequest classifyRequest, HttpServletRequest httpServletRequest) {
@@ -46,9 +41,10 @@ public class ClassifyHandlerController {
         
         ClassifyEvent classifyEvent = ClassifyEvent
                                         .builder()
-                                        .startDate(new Date())
-                                        .videoUrl(classifyRequest.getUrl())
                                         .requestId(requestId)
+                                        .startDate(new Date())
+                                        .authToken(authorizationHeader)
+                                        .videoUrl(classifyRequest.getUrl())
                                         .userId(authService.getCurrentUser().getId())
                                         .build();
 
@@ -56,6 +52,7 @@ public class ClassifyHandlerController {
         historyService.makeNewHistoryRecord(classifyEvent, authorizationHeader);
 
         //2. Push to kafka
+        kafkaProducerService.sendClassifyEvent(classifyEvent);
 
         return ResponseEntity
                 .status(HttpStatus.OK.value())
