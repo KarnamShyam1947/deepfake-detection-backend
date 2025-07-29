@@ -1,12 +1,16 @@
 package ai.deepdetect.consumer;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import ai.deepdetect.dto.ExternalAPIResponse;
+import ai.deepdetect.dto.HistoryResponse;
 import ai.deepdetect.dto.event.ClassifyEvent;
+import ai.deepdetect.dto.event.NotificationEvent;
 import ai.deepdetect.services.ExternalAPIService;
 import ai.deepdetect.services.HistoryService;
+import ai.deepdetect.services.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ClassifyConsumer {
 
+    private final KafkaProducerService kafkaProducerService;
     private final ExternalAPIService externalAPIService;
     private final HistoryService historyService;
 
@@ -26,10 +31,14 @@ public class ClassifyConsumer {
             // REST CALL : Call the python api for actual prediction 
             ExternalAPIResponse apiResponse = externalAPIService.classifyVideo(classifyEvent);
 
-            // REST CALL : update the history with result
-            historyService.updateHistoryRecord(apiResponse, classifyEvent.getAuthToken());
+            HistoryResponse updateHistoryRecord = historyService.updateHistoryRecord(apiResponse, classifyEvent.getAuthToken());
 
-            // // produce event to notification topic
+            NotificationEvent notificationEvent = new NotificationEvent();
+            BeanUtils.copyProperties(updateHistoryRecord, notificationEvent);
+            notificationEvent.setAuthToken(classifyEvent.getAuthToken());
+
+            // produce event to notification topic
+            kafkaProducerService.sendNotificationEvent(notificationEvent);
 
             log.info("Classification Completed");
         }
