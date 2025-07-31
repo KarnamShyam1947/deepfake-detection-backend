@@ -26,6 +26,7 @@ import ai.deepdetect.exceptions.UserAlreadyExistsException;
 import ai.deepdetect.exceptions.UserNotFoundException;
 import ai.deepdetect.services.AuthService;
 import ai.deepdetect.services.JwtService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,10 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
+@Tag(
+    name = "Authentication Controller",
+    description = "All endpoint for authentication"
+)
 public class AuthController {
 
     private final AuthService authService;

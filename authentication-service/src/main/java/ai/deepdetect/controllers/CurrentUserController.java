@@ -17,12 +17,17 @@ import ai.deepdetect.dto.request.ChangePasswordRequest;
 import ai.deepdetect.dto.response.UserResponse;
 import ai.deepdetect.entities.UserEntity;
 import ai.deepdetect.repositories.UserRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/current-user")
+@Tag(
+    name = "Current User Controller",
+    description = "All endpoint for current users"
+)
 public class CurrentUserController {
 
     private final PasswordEncoder passwordEncoder;
