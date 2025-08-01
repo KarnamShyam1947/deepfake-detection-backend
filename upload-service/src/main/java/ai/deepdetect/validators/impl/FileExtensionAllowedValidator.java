@@ -21,6 +21,7 @@ public class FileExtensionAllowedValidator implements ConstraintValidator<FileEx
             .map(String::toLowerCase).collect(Collectors.toSet());
     }
 
+    @SuppressWarnings("null")
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext ctx) {
         if (file == null || file.isEmpty()) return true;
