@@ -55,6 +55,7 @@ public class SecurityConfig {
                 authorizer -> authorizer
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
+                                .requestMatchers("/notification-service/**").permitAll()
                                 .anyRequest().authenticated()
         );
 

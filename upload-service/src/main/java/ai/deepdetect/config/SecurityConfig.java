@@ -55,6 +55,7 @@ public class SecurityConfig {
                 authorizer -> authorizer
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
+                                .requestMatchers("/upload-service/**").permitAll()
                                 .anyRequest().authenticated()
         );
 

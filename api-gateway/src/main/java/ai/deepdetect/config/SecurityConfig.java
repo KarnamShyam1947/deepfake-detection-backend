@@ -24,7 +24,7 @@ public class SecurityConfig {
 
     private final CustomUserDetailService customUserDetailService;
     private final CustomAuthEntryPoint customAuthEntryPoint;
-    private final JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter; 
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -53,9 +53,16 @@ public class SecurityConfig {
 
         security.authorizeHttpRequests(
                 authorizer -> authorizer
+                                .requestMatchers("/eureka/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/upload-service/**").permitAll()
+                                .requestMatchers("/history-service/**").permitAll()
+                                .requestMatchers("/classify-service/**").permitAll()
+                                .requestMatchers("/notification-service/**").permitAll()
+                                .requestMatchers("/authentication-service/**").permitAll()
+                                .requestMatchers("/classify-handler-service/**").permitAll()
                                 .anyRequest().authenticated()
         );
 

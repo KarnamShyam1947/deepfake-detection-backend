@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
 @OpenAPIDefinition(
     info = @Info(
-        title = "Authentication API",
+        title = "Classify handler API",
         version = "1.0",
-        description = "Demo api with authentication and authorization",
+        description = "End point related to Classify Service",
         contact = @Contact(
             name = "Karnam Shyam",
             email = "karnamshyam9009@gmail.com",
