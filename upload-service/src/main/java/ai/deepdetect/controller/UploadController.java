@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,10 @@ public class UploadController {
 
     private final UploadService uploadService;
     
-    @PostMapping
+    @PostMapping(
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<?> upload(@Valid UploadRequest uploadRequest) throws IOException {
         MultipartFile video = uploadRequest.getVideo();
         String url = uploadService.uploadVideoFile(video);
