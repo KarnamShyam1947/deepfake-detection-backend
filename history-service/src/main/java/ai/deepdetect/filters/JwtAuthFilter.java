@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import ai.deepdetect.clients.AuthenticationClient;
 import ai.deepdetect.config.custom.CustomUserDetails;
 import ai.deepdetect.dto.response.UserResponse;
-import ai.deepdetect.services.AuthService;
 import ai.deepdetect.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final AuthService authService;
+    private final AuthenticationClient authenticationClient;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
     @Override
@@ -51,7 +51,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (SecurityContextHolder.getContext().getAuthentication() == null && email != null) {
                 String userEmail = jwtService.getUsername(token);
-                UserResponse user = authService.getUser(userEmail);
+                UserResponse user = authenticationClient.getUserEntityByEmail(userEmail).getBody();
                 CustomUserDetails userDetails = new CustomUserDetails(user);
                 if (jwtService.isValidToken(email, userDetails)) {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

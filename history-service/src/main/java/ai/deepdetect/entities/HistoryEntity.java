@@ -22,11 +22,13 @@ public class HistoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    private double size;
     private int userId;
     private Date endDate;
     private String result;
     private String status;
     private Date startDate;
+    private String filename;
     private String videoUrl;
     private String requestId;
     private double confidence;

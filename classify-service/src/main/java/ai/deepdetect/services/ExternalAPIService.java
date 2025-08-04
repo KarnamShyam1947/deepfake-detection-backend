@@ -15,7 +15,7 @@ public class ExternalAPIService {
         // mocking call
         System.out.println("Making an external api call");
         try {
-            Thread.sleep(2000);
+            Thread.sleep(20000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

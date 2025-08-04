@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class FileSizeLimitValidator implements ConstraintValidator<FileSizeLimit, MultipartFile>  {
 
-    private long size;
+    private double size;
 
     @Override
     public void initialize(FileSizeLimit constraintAnnotation) {

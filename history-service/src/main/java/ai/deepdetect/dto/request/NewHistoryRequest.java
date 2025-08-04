@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewHistoryRequest {
-    private String videoUrl;
     private String requestId;
+    private String filename;
+    private String videoUrl;
     private Date startDate;
     private int userId;
+    private double size;
 }

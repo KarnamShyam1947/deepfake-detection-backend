@@ -13,10 +13,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ClassifyEvent {
 
-    private int userId;
-    private Date startDate;
-    private String videoUrl;
-    private String requestId;
     private String authToken;
+    private String requestId;
+    private String filename;
+    private String videoUrl;
+    private Date startDate;
+    private int userId;
+    private double size;
 
 }

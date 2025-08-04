@@ -19,7 +19,6 @@ public class ApiErrorResponse {
 
     private Map<String, Object> formErrors;
 
-    // TODO: fix to IST 
     public ApiErrorResponse() {
         this.timestamp = new Date();
     }

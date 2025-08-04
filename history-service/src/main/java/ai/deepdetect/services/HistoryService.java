@@ -62,4 +62,14 @@ public class HistoryService {
         return byId;
     }
     
+    public HistoryEntity deleteRecord(int id) throws RecordNotFoundException {
+        HistoryEntity byId = getRecord(id);
+
+        if (byId == null)
+            throw new RecordNotFoundException();
+
+        historyRepository.delete(byId);
+        return byId;
+    }
+    
 }

@@ -7,8 +7,10 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateConfig {
     
+    // For external api call
     @Bean
-    RestTemplate restTemplate()  {
+    RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
 }
