@@ -8,6 +8,7 @@ import ai.deepdetect.entities.UserEntity;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
+    
     UserEntity findByEmail(String email);
     UserEntity findByToken(String token);
 }

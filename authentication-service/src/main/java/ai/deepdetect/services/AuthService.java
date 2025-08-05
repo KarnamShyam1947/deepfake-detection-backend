@@ -1,5 +1,6 @@
 package ai.deepdetect.services;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
@@ -26,6 +27,15 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+
+     public UserEntity getUserById(int id) throws UserNotFoundException {
+        Optional<UserEntity> userEntity = userRepository.findById(id);
+
+        if(userEntity.isEmpty())
+            throw new UserNotFoundException();
+
+        return userEntity.get();
+    }
 
     public UserEntity getUserByEmail(String email) throws UserNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(email);

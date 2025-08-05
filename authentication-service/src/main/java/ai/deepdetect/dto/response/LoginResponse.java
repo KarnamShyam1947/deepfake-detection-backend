@@ -11,6 +11,7 @@ public class LoginResponse {
 
     private String message;
     private String jwtToken; 
+    private String refreshToken;
     private String name;
     private String role;
     private String email;
