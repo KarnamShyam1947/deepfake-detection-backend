@@ -20,12 +20,14 @@ import ai.deepdetect.dto.request.SetPasswordRequest;
 import ai.deepdetect.dto.response.LoginResponse;
 import ai.deepdetect.dto.response.RegisterResponse;
 import ai.deepdetect.dto.response.UserResponse;
+import ai.deepdetect.entities.RefreshTokenEntity;
 import ai.deepdetect.entities.UserEntity;
 import ai.deepdetect.exceptions.OTPExpiredException;
 import ai.deepdetect.exceptions.UserAlreadyExistsException;
 import ai.deepdetect.exceptions.UserNotFoundException;
 import ai.deepdetect.services.AuthService;
 import ai.deepdetect.services.JwtService;
+import ai.deepdetect.services.RefreshTokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 )
 public class AuthController {
 
+    private final RefreshTokenService refreshTokenService;
     private final AuthService authService;
     private final JwtService jwtService;
  
@@ -61,14 +64,35 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Object login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         UserEntity loginUser = authService.loginUser(loginRequest);
         String jwtToken = jwtService.generateJwtToken(new CustomUserDetails(loginUser));
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(loginUser.getId());
 
         LoginResponse loginResponse = new LoginResponse();
         BeanUtils.copyProperties(loginUser, loginResponse);
         loginResponse.setJwtToken(jwtToken);
+        loginResponse.setRefreshToken(refreshToken.getRefreshToken());
         loginResponse.setMessage("User logged in successfully");
+        
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(loginResponse); 
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<LoginResponse> refreshToken(
+        @RequestParam(name = "refresh-token", required = true) String token
+    ) throws UserNotFoundException {
+        RefreshTokenEntity refreshToken = refreshTokenService.refreshToken(token);
+        UserEntity userById = authService.getUserById(refreshToken.getUserId());
+        String jwtToken = jwtService.generateJwtToken(new CustomUserDetails(userById));
+
+        LoginResponse loginResponse = new LoginResponse();
+        BeanUtils.copyProperties(userById, loginResponse);
+        loginResponse.setJwtToken(jwtToken);
+        loginResponse.setRefreshToken(refreshToken.getRefreshToken());
+        loginResponse.setMessage("Refresh Token is generate successfully");
 
         return ResponseEntity
                 .status(HttpStatus.OK.value())
