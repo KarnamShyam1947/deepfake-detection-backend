@@ -11,8 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ExternalAPIResponse {
     private int userId;
+    private double size;
     private Date startDate;
     private String videoUrl;
+    private String filename;
+    private double duration;
     private String requestId;
 
     private String result;

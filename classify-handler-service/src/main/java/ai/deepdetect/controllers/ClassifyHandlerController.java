@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ai.deepdetect.clients.HistoryClient;
-import ai.deepdetect.dto.ClassifyRequest;
 import ai.deepdetect.dto.event.ClassifyEvent;
+import ai.deepdetect.dto.request.ClassifyRequest;
 import ai.deepdetect.services.AuthService;
 import ai.deepdetect.services.KafkaProducerService;
 import ai.deepdetect.utils.RequestUtils;
@@ -42,6 +42,7 @@ public class ClassifyHandlerController {
                                         .authToken(authorizationHeader)
                                         .size(classifyRequest.getSize())
                                         .videoUrl(classifyRequest.getUrl())
+                                        .duration(classifyRequest.getDuration())
                                         .filename(classifyRequest.getFilename())
                                         .userId(authService.getCurrentUser().getId())
                                         .build();

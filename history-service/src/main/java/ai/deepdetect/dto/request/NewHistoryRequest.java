@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class NewHistoryRequest {
     private String requestId;
     private String filename;
+    private double duration;
     private String videoUrl;
     private Date startDate;
     private int userId;

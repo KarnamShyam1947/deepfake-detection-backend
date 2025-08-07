@@ -29,6 +29,7 @@ public class HistoryEntity {
     private String status;
     private Date startDate;
     private String filename;
+    private double duration;
     private String videoUrl;
     private String requestId;
     private double confidence;

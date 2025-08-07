@@ -20,4 +20,8 @@ public class UpdateHistoryRequest {
     private String requestId;
     private double confidence;
     private String outputVideoUrl;
+
+    private double size;
+    private String filename;
+    private double duration;
 }

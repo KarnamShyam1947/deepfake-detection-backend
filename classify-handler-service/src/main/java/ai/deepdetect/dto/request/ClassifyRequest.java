@@ -1,4 +1,4 @@
-package ai.deepdetect.dto;
+package ai.deepdetect.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -12,6 +12,9 @@ public class ClassifyRequest {
 
     @NotBlank(message = "size is required")
     private double size;
+   
+    @NotBlank(message = "duration is required")
+    private double duration;
 
     @NotBlank(message = "url is required")
     private String url;

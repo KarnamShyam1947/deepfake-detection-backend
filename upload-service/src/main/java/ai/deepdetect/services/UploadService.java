@@ -2,7 +2,9 @@ package ai.deepdetect.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,27 @@ import lombok.RequiredArgsConstructor;
 public class UploadService {
 
     private final Cloudinary cloudinary;
+
+    public Map<String,Object> generateSignature() {
+        
+        Map<String, Object> paramsToSign = new LinkedHashMap<>();
+        String publicId = UUID.randomUUID().toString();
+        
+        long timestamp = System.currentTimeMillis() / 1000;
+        paramsToSign.put("timestamp", timestamp);
+        paramsToSign.put("public_id", publicId);
+        
+
+        String signature = cloudinary.apiSignRequest(paramsToSign, cloudinary.config.apiSecret);
+
+        return Map.of(
+            "timestamp", timestamp,
+            "signature", signature,
+            "public_id", publicId,
+            "api_key", cloudinary.config.apiKey,
+            "cloud_name", cloudinary.config.cloudName
+        );
+    }
 
     public String uploadVideoFile(MultipartFile multipartVideo) throws IOException {
         File videoFile = FileUtils.convert(multipartVideo);
