@@ -21,6 +21,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import ai.deepdetect.config.security.custom.CustomAuthEntryPoint;
 import ai.deepdetect.config.security.custom.CustomUserDetailService;
+import ai.deepdetect.config.security.oauth.CustomOAuthSuccessHandler;
+import ai.deepdetect.config.security.oauth.CustomOAuthUserService;
 import ai.deepdetect.filters.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 
@@ -28,7 +30,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final CustomOAuthSuccessHandler customOAuthSuccessHandler;
     private final CustomUserDetailService customUserDetailService;
+    private final CustomOAuthUserService customOAuthUserService;
     private final CustomAuthEntryPoint customAuthEntryPoint;
     private final JwtAuthFilter jwtAuthFilter;
 
@@ -45,6 +49,9 @@ public class SecurityConfig {
     private boolean isCredentialsAllowed;
     
     private String[] permittedUrls = {
+        "/auth/**",
+        "/login/**",
+        "/oauth2/**",
         "/swagger-ui/**",
         "/v3/api-docs/**",
         "/api/v1/auth/**",
@@ -112,6 +119,15 @@ public class SecurityConfig {
             exception -> exception
                             .authenticationEntryPoint(customAuthEntryPoint)
         );
+
+        security.oauth2Login(oauth -> oauth
+                                .loginPage("/auth/login")
+                                .userInfoEndpoint(
+                                    user -> user.userService(customOAuthUserService)
+                                )
+                                .successHandler(customOAuthSuccessHandler)
+                                .permitAll());
+
         return security.build();
     }
 }

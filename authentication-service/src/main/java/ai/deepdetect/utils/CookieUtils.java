@@ -26,7 +26,8 @@ public class CookieUtils {
         cookie.setHttpOnly(isHttpOnly);
         cookie.setMaxAge(age);
         cookie.setPath(path);
-
+        cookie.setAttribute("SameSite", "None");
+        
         return cookie;
     }
     

@@ -30,4 +30,7 @@ public class UserEntity {
 
     private String token;
     private Date expirationDate;
+
+    private String authProvider;
+    private String authProviderId;
 }
