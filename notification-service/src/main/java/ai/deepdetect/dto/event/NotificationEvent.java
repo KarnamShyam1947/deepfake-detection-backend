@@ -22,4 +22,8 @@ public class NotificationEvent {
     private double confidence;
     private String authToken;
     private String outputVideoUrl;
+    
+    private double size;
+    private String filename;
+    private double duration;
 }

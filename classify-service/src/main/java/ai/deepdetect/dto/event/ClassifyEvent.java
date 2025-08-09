@@ -15,10 +15,12 @@ public class ClassifyEvent {
 
     private String authToken;
     private String requestId;
-    private String filename;
     private String videoUrl;
     private Date startDate;
     private int userId;
+    
     private double size;
+    private String filename;
+    private double duration;
 
 }

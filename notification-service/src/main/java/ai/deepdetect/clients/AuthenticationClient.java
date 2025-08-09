@@ -13,4 +13,6 @@ public interface AuthenticationClient {
     @GetMapping("/api/v1/auth/user-entity")
     public ResponseEntity<UserResponse> getUserEntityByEmail(@RequestParam(required = true) String email); 
     
+    @GetMapping("/api/v1/auth/user-id")
+    public ResponseEntity<UserResponse> getUserById(@RequestParam(required = true) int id);
 }

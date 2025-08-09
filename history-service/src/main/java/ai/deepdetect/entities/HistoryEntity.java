@@ -22,8 +22,8 @@ public class HistoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private double size;
     private int userId;
+    private double size;
     private Date endDate;
     private String result;
     private String status;
