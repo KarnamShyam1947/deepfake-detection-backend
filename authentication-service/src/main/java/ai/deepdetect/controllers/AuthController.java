@@ -133,6 +133,18 @@ public class AuthController {
                 .body(userResponse);
     }
     
+    @GetMapping("/user-id")
+    public ResponseEntity<UserResponse> getUserById(
+        @RequestParam(required = true) int id
+    ) throws UserNotFoundException {
+        UserEntity userByEmail = authService.getUserById(id);
+        UserResponse userResponse = UserResponse.entityToResponse(userByEmail);
+
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(userResponse);
+    }
+    
     @GetMapping("/user-entity")
     public ResponseEntity<UserEntity> getUserEntityByEmail(
         @RequestParam(required = true) String email
