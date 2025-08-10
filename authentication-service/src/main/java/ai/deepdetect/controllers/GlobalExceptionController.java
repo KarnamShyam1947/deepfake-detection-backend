@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import ai.deepdetect.dto.response.ApiErrorResponse;
 import ai.deepdetect.exceptions.AuthorizationHeaderMissingException;
+import ai.deepdetect.exceptions.OTPExpiredException;
 import ai.deepdetect.exceptions.UserAlreadyExistsException;
 import ai.deepdetect.exceptions.UserNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -46,9 +48,40 @@ public class GlobalExceptionController {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(value = OTPExpiredException.class)
+    public ResponseEntity<ApiErrorResponse> handleOTPExpiredException(OTPExpiredException e) {
+        
+        ApiErrorResponse errorResponse = new ApiErrorResponse();
+
+        errorResponse.setPath(httpServletRequest.getServletPath());
+        errorResponse.setErrorReason(e.toString());
+        errorResponse.setError("Your Requested OTP expired");
+        errorResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.name());
+
+        return ResponseEntity
+                .status(errorResponse.getStatusCode())
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(value = DisabledException.class)
+    public ResponseEntity<ApiErrorResponse> handleDisabledException(DisabledException e) {
+        
+        ApiErrorResponse errorResponse = new ApiErrorResponse();
+
+        errorResponse.setPath(httpServletRequest.getServletPath());
+        errorResponse.setErrorReason(e.toString());
+        errorResponse.setError("Your account not activated yet please check your email");
+        errorResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.name());
+
+        return ResponseEntity
+                .status(errorResponse.getStatusCode())
+                .body(errorResponse);
+    }
+
     @ExceptionHandler(value = UserNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> UserNotFoundException(UserNotFoundException e) {
-        
         
         ApiErrorResponse errorResponse = new ApiErrorResponse();
 
@@ -65,7 +98,6 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        
         
         ApiErrorResponse errorResponse = new ApiErrorResponse();
 

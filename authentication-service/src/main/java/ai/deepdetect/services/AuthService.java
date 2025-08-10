@@ -65,8 +65,15 @@ public class AuthService {
         BeanUtils.copyProperties(registerRequest, newUser);
         newUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         newUser.setRole("USER");
+        newUser.setActive(false);
+        newUser.setToken(UUID.randomUUID().toString());
+        newUser.setExpirationDate(DateTimeUtils.addHours(1));
 
-        return userRepository.save(newUser);
+        UserEntity save = userRepository.save(newUser);
+
+        // TODO: Send activeate mail - kafka
+
+        return save;
     }
 
     public UserEntity loginUser(LoginRequest loginRequest) {
@@ -81,15 +88,16 @@ public class AuthService {
 
     }
     
-    public UserEntity forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws UserNotFoundException {
-        UserEntity userByEmail = getUserByEmail(forgotPasswordRequest.getEmail());
+    public UserEntity forgotPassword(String email) throws UserNotFoundException {
+        UserEntity userByEmail = getUserByEmail(email);
 
-        // TODO: Send Mail
         userByEmail.setToken(UUID.randomUUID().toString());
         userByEmail.setExpirationDate(DateTimeUtils.addHours(1));
-        userRepository.save(userByEmail);
+        UserEntity newUser = userRepository.save(userByEmail);
         
-        return userByEmail;
+        // TODO: Send Mail
+
+        return newUser;
     }
 
     public UserEntity setUserPassword(SetPasswordRequest setPasswordRequest) throws UserNotFoundException, OTPExpiredException {
@@ -104,5 +112,13 @@ public class AuthService {
         }
 
         return userByToken;
+    }
+
+    public UserEntity activateUser(String token) throws UserNotFoundException {
+        UserEntity userByToken = getUserByToken(token);
+        userByToken.setActive(true);
+        userByToken.setToken(null);
+        userByToken.setExpirationDate(null);
+        return userRepository.save(userByToken);
     }
 }

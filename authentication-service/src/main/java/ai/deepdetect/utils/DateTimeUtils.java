@@ -12,6 +12,12 @@ public class DateTimeUtils {
         calendar.add(Calendar.HOUR, hrs); 
         return calendar.getTime();
     }
+    
+    public static Date addMinutes(int hrs) {
+        Calendar calendar = Calendar.getInstance(); 
+        calendar.add(Calendar.MINUTE, hrs); 
+        return calendar.getTime();
+    }
 
     public static boolean isTokenInTime(Date expirationDate) throws OTPExpiredException {
         Date now = new Date();

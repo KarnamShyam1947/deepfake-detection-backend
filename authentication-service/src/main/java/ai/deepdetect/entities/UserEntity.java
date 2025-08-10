@@ -26,8 +26,9 @@ public class UserEntity {
     private String role;
     private String email;
     private String password;
+    private boolean isActive;
     private String phoneNumber;
-
+    
     private String token;
     private Date expirationDate;
 }
