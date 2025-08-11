@@ -47,6 +47,7 @@ public class SecurityConfig {
     private String[] permittedUrls = {
         "/swagger-ui/**",
         "/v3/api-docs/**",
+        "/springwolf/**",
         "/notification-service/**"
     };
 
