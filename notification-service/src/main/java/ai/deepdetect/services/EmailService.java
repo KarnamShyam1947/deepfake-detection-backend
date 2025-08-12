@@ -27,6 +27,7 @@ public class EmailService {
     private final JavaMailSender javaMailSender;
     private final Configuration configuration;
 
+    @SuppressWarnings("null")
     public void sendEmail(NotificationEvent notificationEvent) {
         log.info("Sending result mail for request id : {}", notificationEvent.getRequestId());
 

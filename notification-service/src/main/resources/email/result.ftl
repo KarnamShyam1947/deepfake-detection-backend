@@ -417,13 +417,13 @@
 
 <body>
     <div class="email-container">
-        <!-- Header -->
+        
         <div class="header">
             <div class="logo">DeepDetect AI</div>
             <div class="header-subtitle">Advanced AI-Powered Deepfake Detection</div>
         </div>
 
-        <!-- Content -->
+        
         <div class="content">
             <div class="greeting">
                 Hello ${userName},
@@ -432,7 +432,7 @@
             <p>Your video analysis has been completed! Our advanced AI system has finished examining your video for
                 signs of manipulation.</p>
 
-            <!-- Analysis Results Card -->
+            
             <div class="analysis-card">
                 <div class="analysis-header">
                     <div>
@@ -446,7 +446,7 @@
                     </div>
                 </div>
 
-                 <!-- Result Box -->
+                 
                 <div class="result-box ${resultClass}">
                     <div class="result-title ${resultClass}">
                         ${resultIcon?no_esc} ${result}
@@ -456,7 +456,7 @@
                     </div>
                 </div>
                 
-                <!-- File Information -->
+                
                 <div class="file-info">
                     <h4 style="margin: 0 0 16px 0; color: #1e293b; font-size: 16px;">File Details</h4>
                     <div class="file-info-grid">
@@ -500,7 +500,7 @@
             </p>
         </div>
 
-        <!-- Footer -->
+        
         <div class="footer">
             <div>
                 <strong>DeepDetect AI</strong> - Protecting digital authenticity with advanced AI

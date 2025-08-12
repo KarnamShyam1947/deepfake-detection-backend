@@ -6,6 +6,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,7 +57,7 @@ public class AuthController {
         
         RegisterResponse registerResponse = new RegisterResponse();
         BeanUtils.copyProperties(newUser, registerResponse);
-        registerResponse.setMessage("User registered successfully");
+        registerResponse.setMessage("User registered successfully, check your mail for activation link");
 
         return ResponseEntity
                 .status(HttpStatus.CREATED.value())
@@ -98,10 +99,23 @@ public class AuthController {
                 .status(HttpStatus.OK.value())
                 .body(loginResponse); 
     }
+
+    @PostMapping("/resend-activation")
+    public ResponseEntity<Map<String, Object>> resendActivation(
+        @RequestParam(required = true) String email
+    ) throws UserNotFoundException {
+        UserEntity user = authService.forgotPassword(email);
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(Map.of(
+                    "message", "Password reset link was sent to your mail",
+                    "user", UserResponse.entityToResponse(user)
+                ));
+    }
     
     @PostMapping("/forgot-password")
     public Object forgotPassword(@Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) throws UserNotFoundException {
-        UserEntity user = authService.forgotPassword(forgotPasswordRequest);
+        UserEntity user = authService.forgotPassword(forgotPasswordRequest.getEmail());
         return ResponseEntity
                 .status(HttpStatus.OK.value())
                 .body(Map.of(
@@ -119,6 +133,22 @@ public class AuthController {
                     "message", "Password reset successful",
                     "user", UserResponse.entityToResponse(user)
                 ));
+    }
+
+    @GetMapping("/user/activate/{token}")
+    public ResponseEntity<?> activateUser(
+        @PathVariable(name = "token") String token
+    ) throws UserNotFoundException {
+
+        UserEntity activateUser = authService.activateUser(token);
+
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(Map.of(
+                    "message", "User activated successfully",
+                    "user", UserResponse.entityToResponse(activateUser)
+                ));
+
     }
     
     @GetMapping("/user")
