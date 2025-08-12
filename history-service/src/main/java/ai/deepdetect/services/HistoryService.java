@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import ai.deepdetect.dto.request.NewHistoryRequest;
@@ -19,6 +22,8 @@ public class HistoryService {
 
     private final HistoryRepository historyRepository;
 
+    @CachePut(value = "historyRequestId", key = "#result.requestId")
+    @CacheEvict(value = "historyList", allEntries = true)
     public HistoryEntity addHistoryRecord(NewHistoryRequest historyRequest) {
         HistoryEntity entity = new HistoryEntity();
         BeanUtils.copyProperties(historyRequest, entity);
@@ -27,6 +32,8 @@ public class HistoryService {
         return historyRepository.save(entity);
     }
     
+    @CachePut(value = "historyRequestId", key = "#result.requestId")
+    @CacheEvict(value = "historyList", allEntries = true)
     public HistoryEntity updateHistoryRecord(UpdateHistoryRequest historyRequest) throws RecordNotFoundException {
         HistoryEntity entity = getRecordByRequestId(historyRequest.getRequestId());
         BeanUtils.copyProperties(historyRequest, entity);
@@ -36,14 +43,17 @@ public class HistoryService {
         return historyRepository.save(entity);
     }
 
+    @Cacheable(value = "historyList")
     public List<HistoryEntity> getAllRecords() {
         return historyRepository.findAll();
     }
     
+    @Cacheable(value = "historyUserId", key = "#userId")
     public List<HistoryEntity> getAllUserRecords(int userId) {
         return historyRepository.findByUserId(userId);
     }
     
+    @Cacheable(value = "historyId", key = "#id")
     public HistoryEntity getRecord(int id) throws RecordNotFoundException {
         HistoryEntity byId = historyRepository.findById(id);
 
@@ -53,6 +63,7 @@ public class HistoryService {
         return byId;
     }
     
+    @Cacheable(value = "historyRequestId", key = "#id")
     public HistoryEntity getRecordByRequestId(String id) throws RecordNotFoundException {
         HistoryEntity byId = historyRepository.findByRequestId(id);
 
@@ -62,6 +73,7 @@ public class HistoryService {
         return byId;
     }
     
+    @CacheEvict(value = "historyId", key = "#id")
     public HistoryEntity deleteRecord(int id) throws RecordNotFoundException {
         HistoryEntity byId = getRecord(id);
 
