@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class EmailService {
     private final AuthenticationClient authenticationClient;
     private final JavaMailSender javaMailSender;
     private final Configuration configuration;
+
+    @Value("${application.frontend-url}")
+    private String frontendUrl;
 
     @SuppressWarnings("null")
     public void sendEmail(NotificationEvent notificationEvent) {
@@ -76,7 +80,7 @@ public class EmailService {
         }
 
     }
- 
+
     private Map<Object, Object> getResultMetaData(NotificationEvent event) {
     
         if ("FAKE".equals(event.getResult())) {
@@ -97,5 +101,39 @@ public class EmailService {
             );
         }
     }
-    
+     
+    public void sendActivationEmail(UserResponse userResponse) {
+        log.info("Sending activation mail for user id : {}", userResponse.getId());
+
+        HashMap<String, Object> map = new HashMap<>();
+        Writer out = new StringWriter();
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+
+        try {
+            helper.setFrom("vitap.library@gmail.com", "Admin");
+            helper.setTo(userResponse.getEmail());
+            helper.setSubject("User Account Activation.....!!!");
+
+            Template template = configuration.getTemplate("activate.ftl");
+
+            map.put("userName", userResponse.getName());
+            map.put(
+                "activationLink", 
+                String.format("%s/user/activate/%s", frontendUrl, userResponse.getToken())
+            );
+
+            template.process(map, out);
+
+            helper.setText(out.toString(), true);
+
+            javaMailSender.send(mimeMessage);
+        log.info("successfully send activation mail for user id : {}", userResponse.getId());
+        } 
+        catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
+    }    
 }
