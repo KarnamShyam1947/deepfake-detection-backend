@@ -9,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ai.deepdetect.dto.request.ForgotPasswordRequest;
 import ai.deepdetect.dto.request.LoginRequest;
 import ai.deepdetect.dto.request.RegisterRequest;
 import ai.deepdetect.dto.request.SetPasswordRequest;

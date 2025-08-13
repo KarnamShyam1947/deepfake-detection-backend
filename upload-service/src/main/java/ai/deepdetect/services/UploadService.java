@@ -29,6 +29,7 @@ public class UploadService {
         long timestamp = System.currentTimeMillis() / 1000;
         paramsToSign.put("timestamp", timestamp);
         paramsToSign.put("public_id", publicId);
+        paramsToSign.put("folder", "deepfake-uploads");
         
 
         String signature = cloudinary.apiSignRequest(paramsToSign, cloudinary.config.apiSecret);
@@ -36,7 +37,7 @@ public class UploadService {
         return Map.of(
             "timestamp", timestamp,
             "signature", signature,
-            "public_id", publicId,
+            "folder", "deepfake-uploads",
             "api_key", cloudinary.config.apiKey,
             "cloud_name", cloudinary.config.cloudName
         );
