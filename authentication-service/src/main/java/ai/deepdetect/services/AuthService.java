@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +29,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
+    @Cacheable(value = "userById", key = "#id")
      public UserEntity getUserById(int id) throws UserNotFoundException {
         Optional<UserEntity> userEntity = userRepository.findById(id);
 
@@ -36,6 +39,7 @@ public class AuthService {
         return userEntity.get();
     }
 
+    @Cacheable(value = "userByEmail", key = "#email")
     public UserEntity getUserByEmail(String email) throws UserNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(email);
 
@@ -45,6 +49,7 @@ public class AuthService {
         return userEntity;
     }
     
+    @Cacheable(value = "userByToken", key = "#token")
     public UserEntity getUserByToken(String token) throws UserNotFoundException {
         UserEntity userEntity = userRepository.findByToken(token);
 
@@ -53,7 +58,7 @@ public class AuthService {
 
         return userEntity;
     }
-
+    
     public UserEntity registerUser(RegisterRequest registerRequest) throws UserNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(registerRequest.getEmail());
 
@@ -87,6 +92,7 @@ public class AuthService {
 
     }
     
+    @CachePut(value = "userByEmail", key = "#result.email")
     public UserEntity forgotPassword(String email) throws UserNotFoundException {
         UserEntity userByEmail = getUserByEmail(email);
 
@@ -99,6 +105,7 @@ public class AuthService {
         return newUser;
     }
 
+    @CachePut(value = "userById", key = "#result.id")
     public UserEntity setUserPassword(SetPasswordRequest setPasswordRequest) throws UserNotFoundException, OTPExpiredException {
         UserEntity userByToken = getUserByToken(setPasswordRequest.getToken());
 
@@ -113,6 +120,7 @@ public class AuthService {
         return userByToken;
     }
 
+    @CachePut(value = "userByToken", key = "#token")
     public UserEntity activateUser(String token) throws UserNotFoundException {
         UserEntity userByToken = getUserByToken(token);
         userByToken.setActive(true);
