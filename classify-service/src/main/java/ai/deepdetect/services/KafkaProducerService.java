@@ -8,6 +8,9 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
 import ai.deepdetect.dto.event.NotificationEvent;
+import io.github.springwolf.bindings.kafka.annotations.KafkaAsyncOperationBinding;
+import io.github.springwolf.core.asyncapi.annotations.AsyncOperation;
+import io.github.springwolf.core.asyncapi.annotations.AsyncPublisher;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -19,6 +22,13 @@ public class KafkaProducerService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
+    @AsyncPublisher(
+        operation = @AsyncOperation(
+            channelName = "${application.kafka.topic-name}",
+            description = "this topic send notification event to the notify user that prediction was completed"
+        )
+    )
+    @KafkaAsyncOperationBinding
     public void sendNotificationEvent(NotificationEvent notificationEvent) {
         CompletableFuture<SendResult<String, Object>> send = kafkaTemplate.send(topicName, notificationEvent);
 

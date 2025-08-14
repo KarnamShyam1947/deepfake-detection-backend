@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ai.deepdetect.config.security.custom.CustomUserDetails;
+import ai.deepdetect.config.security.oauth.CustomOAuthUser;
 import ai.deepdetect.dto.request.ChangePasswordRequest;
-import ai.deepdetect.dto.response.UserResponse;
 import ai.deepdetect.entities.UserEntity;
 import ai.deepdetect.repositories.UserRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,14 +37,16 @@ public class CurrentUserController {
     public ResponseEntity<?> get() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         var principal = authentication.getPrincipal();
+        UserEntity currentUser = null;
 
-        if (principal instanceof CustomUserDetails) {
-            UserEntity userEntity = ((CustomUserDetails) principal).getUserEntity();
-            return ResponseEntity.ok(UserResponse.entityToResponse(userEntity));
+        if (principal instanceof CustomUserDetails)
+            currentUser = ((CustomUserDetails) principal).getUserEntity();
 
-        } else {
-            return ResponseEntity.ok(principal.toString());
-        }
+        
+        else if(principal instanceof CustomOAuthUser)
+            currentUser = ((CustomOAuthUser) principal).getUserEntity();
+        
+        return ResponseEntity.ok(currentUser);
  
     }
     

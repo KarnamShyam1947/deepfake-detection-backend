@@ -5,10 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ai.deepdetect.config.custom.CustomFeignErrorDecoder;
 import ai.deepdetect.dto.response.UserResponse;
 
 
-@FeignClient(name = "AUTHENTICATION-SERVICE")
+@FeignClient(name = "AUTHENTICATION-SERVICE", configuration = CustomFeignErrorDecoder.class)
 public interface AuthenticationClient {
  
     @GetMapping("/api/v1/auth/user-entity")

@@ -18,6 +18,7 @@ import ai.deepdetect.services.AuthService;
 import ai.deepdetect.services.KafkaProducerService;
 import ai.deepdetect.utils.RequestUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,7 +31,7 @@ public class ClassifyHandlerController {
     private final KafkaProducerService kafkaProducerService;
 
     @PostMapping
-    public ResponseEntity<?> handlePost(@RequestBody ClassifyRequest classifyRequest, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<?> handlePost(@Valid @RequestBody ClassifyRequest classifyRequest, HttpServletRequest httpServletRequest) {
 
         String authorizationHeader = RequestUtils.extractAuthorizationHeader(httpServletRequest);
         String requestId = UUID.randomUUID().toString();

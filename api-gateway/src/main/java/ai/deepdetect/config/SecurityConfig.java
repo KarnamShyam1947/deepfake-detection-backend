@@ -46,6 +46,7 @@ public class SecurityConfig {
     
     private String[] permittedUrls = {
         "/eureka/**",
+        "/oauth2/**",
         "/swagger-ui/**",
         "/v3/api-docs/**",
         "/api/v1/auth/**",

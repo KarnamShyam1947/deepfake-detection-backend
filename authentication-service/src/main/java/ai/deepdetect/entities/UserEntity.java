@@ -32,4 +32,7 @@ public class UserEntity implements Serializable {
     
     private String token;
     private Date expirationDate;
+
+    private String authProvider;
+    private String authProviderId;
 }
