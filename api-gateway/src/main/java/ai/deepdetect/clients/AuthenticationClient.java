@@ -5,9 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ai.deepdetect.clients.fallbacks.AuthenticationClientFallBack;
 import ai.deepdetect.dto.UserResponse;
 
-@FeignClient(name = "AUTHENTICATION-SERVICE")
+@FeignClient(
+    name = "AUTHENTICATION-SERVICE",
+    fallback = AuthenticationClientFallBack.class
+)
 public interface AuthenticationClient {
  
     @GetMapping("/api/v1/auth/user-entity")

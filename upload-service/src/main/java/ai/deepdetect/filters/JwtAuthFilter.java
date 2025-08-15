@@ -3,12 +3,14 @@ package ai.deepdetect.filters;
 import java.io.IOException;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import ai.deepdetect.clients.AuthenticationClient;
@@ -23,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Component   
+@Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -67,6 +69,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                             .setAuthentication(authenticationToken);
 
                 }
+                else
+                    throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Authentication service is unavailable, please try again after sometime");
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
