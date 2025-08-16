@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
+    private final KafkaProducerService kafkaProducerService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
@@ -75,7 +76,7 @@ public class AuthService {
 
         UserEntity save = userRepository.save(newUser);
 
-        // TODO: Send activeate mail - kafka
+        kafkaProducerService.sendActivationEvent(save);
 
         return save;
     }
@@ -99,8 +100,8 @@ public class AuthService {
         userByEmail.setToken(UUID.randomUUID().toString());
         userByEmail.setExpirationDate(DateTimeUtils.addHours(1));
         UserEntity newUser = userRepository.save(userByEmail);
-        
-        // TODO: Send Mail
+
+        kafkaProducerService.sendActivationEvent(newUser);
 
         return newUser;
     }

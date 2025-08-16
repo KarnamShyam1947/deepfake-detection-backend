@@ -1,4 +1,4 @@
-package ai.deepdetect.consumer;
+package ai.deepdetect.controller;
 
 import java.util.Map;
 
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ai.deepdetect.dto.event.NotificationEvent;
+import ai.deepdetect.dto.event.UserEvent;
 import ai.deepdetect.services.EmailService;
 import lombok.RequiredArgsConstructor;
 
@@ -20,9 +21,20 @@ public class NotificationController {
 
     private final EmailService emailService;
 
-    @PostMapping
+    @PostMapping("/notify")
     public ResponseEntity<Map<String, String>> sendNotification(@RequestBody NotificationEvent event) {
         emailService.sendEmail(event);
+
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(Map.of(
+                    "message", "email send to the user"
+                ));
+    }
+    
+    @PostMapping("/activation")
+    public ResponseEntity<Map<String, String>> sendNotification(@RequestBody UserEvent event) {
+        emailService.sendActivationEmail(event);
 
         return ResponseEntity
                 .status(HttpStatus.OK.value())

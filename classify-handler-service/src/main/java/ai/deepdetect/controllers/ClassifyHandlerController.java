@@ -53,7 +53,7 @@ public class ClassifyHandlerController {
         kafkaProducerService.sendClassifyEvent(classifyEvent);
 
         return ResponseEntity
-                .status(HttpStatus.OK.value())
+                .status(HttpStatus.ACCEPTED.value())
                 .body(Map.of(
                     "message", "Your classification request submitted successfully, your request id is : " + requestId
                 ));
